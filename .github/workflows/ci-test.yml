@@ -19,4 +19,4 @@ jobs:
 
     - name: Execute Salt commands via script
       run: |
-        ./run_salt_commands.sh
+        ./salt-api.sh
