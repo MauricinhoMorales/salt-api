@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define variables
-API_URL="http://localhost:8000"
+API_URL="http://192.168.0.113:8000"
 USERNAME="saltuser"
 PASSWORD="pan"
 EAUTH="pam"
