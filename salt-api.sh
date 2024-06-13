@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Define variables
-API_URL="http://3.130.220.130:8000"
-USERNAME="saltuser"
-PASSWORD="koshee"
+API_URL="http://$SALT_MASTER_HOST:8000"
+USERNAME=$SALT_MASTER_USER
+PASSWORD=$SSH_PASSWORD
 EAUTH="auto"
 
 # Obtain auth token

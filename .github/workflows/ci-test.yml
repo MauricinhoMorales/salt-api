@@ -20,7 +20,7 @@ jobs:
     - name: Set up SSH key
       run: |
         mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/ci_key
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/ci_key
         chmod 600 ~/.ssh/ci_key
         ssh-keyscan -H 3.130.220.130 >> ~/.ssh/known_hosts
 
@@ -32,7 +32,7 @@ jobs:
   
     - name: Transfer files to Salt Master
       run: |
-        sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz --delete . "${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }}:/home/koshee/koshee/protect/salt_test"
+        sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz --delete --exclude=.git --filter=':- .gitignore' . "${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }}:/home/koshee/koshee/protect/salt_test"
 
     - name: Install dependencies
       run: |
