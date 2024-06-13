@@ -10,7 +10,16 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+  
+    - name: Transfer files to Salt Master
+      run: |
+        sshpass -p koshee rsync -avz --delete . "koshee@3.130.220.130:/home/koshee/koshee/protect/salt_new"
 
     - name: Install dependencies
       run: |
