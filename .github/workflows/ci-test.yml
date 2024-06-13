@@ -15,7 +15,7 @@ jobs:
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        ssh-private-key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCRftiprQWOAIAlbOPVGAVkJtetyBHL3tJGUgf8gBjbHyRCQhyf5WQHR+XWBcmuMBhnKnwebOADaPwNOa5cSzXph4a11Mp9Hu7CLr6asBvVtJxpBUMFSAF4I3NfKHrqmZR1RzkcKGzIVUmZxu7LYu09tzwtu0a4cCsi4ZV/P1hG5338v8L2ZbHxT9W5AiNx2QaNjw7xzBSubAahm2/ODV1S8gVFCzMFHp04NdHc3K+WM5qaBTXVDgtHF9oJo7Rqj0xtUJhKoBHllCVnjgnCtwBGflCMPK1PM+ASToIMun2rjPBFmOp7TmLk3yA0lLPBEiIlNo3s9qxddloy0mNWAorZ"
   
     - name: Transfer files to Salt Master
       run: |
