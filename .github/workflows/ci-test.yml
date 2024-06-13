@@ -40,5 +40,9 @@ jobs:
         sudo apt-get install -y jq
 
     - name: Execute Salt commands via script
+      env:
+        SALT_MASTER_HOST: ${{ secrets.SALT_MASTER_HOST }}
+        SALT_MASTER_USER: ${{ secrets.SALT_MASTER_USER }}
+        SALT_MASTER_PASSWORD: ${{ secrets.SSH_PASSWORD }}
       run: |
         ./salt-api.sh
