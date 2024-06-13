@@ -32,7 +32,7 @@ jobs:
   
     - name: Transfer files to Salt Master
       run: |
-        sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz --delete . "${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }}:/home/koshee/koshee/protect/salt"
+        sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz --delete . "${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }}:/home/koshee/koshee/protect/salt_test"
 
     - name: Install dependencies
       run: |
