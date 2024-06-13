@@ -11,14 +11,24 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        lfs: true
 
     - name: Install sshpass
       run: sudo apt-get install -y sshpass
 
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Set up SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/ci_key
+        chmod 600 ~/.ssh/ci_key
+        ssh-keyscan -H 3.130.220.130 >> ~/.ssh/known_hosts
+
+    - name: Add config file
+      run: |
+        cat ansible/koshee-ci-server/ssh_config > ~/.ssh/config
+        chmod 600 ~/.ssh/config
+        chmod 700 ~/.ssh
   
     - name: Transfer files to Salt Master
       run: |
