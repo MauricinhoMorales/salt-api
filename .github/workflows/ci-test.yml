@@ -2,7 +2,8 @@ name: CI with SaltStack API
 
 on:
   push:
-    branches: [main]
+    branches:
+      - feature/salt
 
 jobs:
   build:
@@ -22,7 +23,7 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/ci_key
         chmod 600 ~/.ssh/ci_key
-        ssh-keyscan -H 3.130.220.130 >> ~/.ssh/known_hosts
+        ssh-keyscan -H ${{ secrets.SALT_MASTER_HOST }} >> ~/.ssh/known_hosts
 
     - name: Add config file
       run: |
@@ -45,4 +46,4 @@ jobs:
         SALT_MASTER_USER: ${{ secrets.SALT_MASTER_USER }}
         SALT_MASTER_PASSWORD: ${{ secrets.SSH_PASSWORD }}
       run: |
-        ./salt-api.sh
+        ./salt/salt-api.sh
