@@ -49,9 +49,6 @@ jobs:
         ./salt/salt-api.sh
 
     - name: Execute Salt commands via ssh
-      env:
-        SALT_MASTER_HOST: ${{ secrets.SALT_MASTER_HOST }}
-        SALT_MASTER_USER: ${{ secrets.SALT_MASTER_USER }}
       run: |
-        ./salt/salt-ssh.sh
+        ssh -i ~/.ssh/ci_key koshee@3.130.220.130 'echo koshee | sudo -S salt-run state.orchestrate orchestrate.orchestrate_ci pillar={"targets":"CoreCluster1 or CoreCluster12"}'
     
