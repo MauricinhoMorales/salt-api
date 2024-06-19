@@ -47,3 +47,12 @@ jobs:
         SALT_MASTER_PASSWORD: ${{ secrets.SSH_PASSWORD }}
       run: |
         ./salt/salt-api.sh
+
+    - name: Execute Salt commands via ssh
+      env:
+        SALT_MASTER_HOST: ${{ secrets.SALT_MASTER_HOST }}
+        SALT_MASTER_USER: ${{ secrets.SALT_MASTER_USER }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        ./salt/salt-ssh.sh
+    
