@@ -52,7 +52,6 @@ jobs:
       env:
         SALT_MASTER_HOST: ${{ secrets.SALT_MASTER_HOST }}
         SALT_MASTER_USER: ${{ secrets.SALT_MASTER_USER }}
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
         ./salt/salt-ssh.sh
     

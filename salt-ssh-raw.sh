@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Define variables
-SALT_MASTER_HOST=$SALT_MASTER_HOST
-SALT_MASTER_USER=$SALT_MASTER_USER
+SALT_MASTER_HOST="3.130.220.130"
+SALT_MASTER_USER="koshee"
 SSH_PRIVATE_KEY="~/.ssh/ci_key_koshee.pem"
 
 # Define the orchestrate command to be executed on the Salt master
