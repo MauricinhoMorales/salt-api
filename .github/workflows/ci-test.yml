@@ -33,7 +33,7 @@ jobs:
   
     - name: Transfer files to Salt Master
       run: |
-        sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz --delete --exclude=.git --filter=':- .gitignore' . "${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }}:/home/koshee/koshee/protect/salt_test"
+        rsync -avz --delete --exclude=.git --filter=':- .gitignore' . "${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }}:/home/koshee/koshee/protect/salt_test"
 
     - name: Install dependencies
       run: |
