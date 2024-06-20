@@ -2,6 +2,6 @@ Host koshee-ci-server
     HostName 3.130.220.130
     KeepAlive yes
     ServerAliveInterval 60
-    Port 6032
-    User demo
-    IdentityFile ~/.ssh/ci_key
+    Port 22
+    User koshee
+    IdentityFile ~/.ssh/ci_key_koshee.pem

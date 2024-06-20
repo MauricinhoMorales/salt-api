@@ -1,5 +1,9 @@
 name: CI with SaltStack API
 
+env:
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+
 on:
   push:
     branches:
@@ -21,9 +25,9 @@ jobs:
     - name: Set up SSH key
       run: |
         mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/ci_key
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/ci_key
         chmod 600 ~/.ssh/ci_key
-        ssh-keyscan -H ${{ secrets.SALT_MASTER_HOST }} >> ~/.ssh/known_hosts
+        ssh-keyscan -H 3.130.220.130 >> ~/.ssh/known_hosts
 
     - name: Add config file
       run: |
@@ -33,49 +37,44 @@ jobs:
   
     - name: Transfer files to Salt Master
       run: |
-        sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz --delete --exclude=.git --filter=':- .gitignore' . "${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }}:/home/koshee/koshee/protect/salt_test"
-
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y jq
+        sshpass -p "$SSH_PASSWORD" rsync -avz --delete --exclude=.git --filter=':- .gitignore' . "koshee-ci-server:/home/koshee/koshee/protect/salt_test"
 
     - name: Execute test-nvidia-smi in CoreCluster1
       run: |
-        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-nvidia-smi'
+        ssh koshee-ci-server 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-nvidia-smi'
 
     - name: Execute test-config-load in CoreCluster1
       run: |
-        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-config-load'
+        ssh koshee-ci-server 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-config-load'
         
     - name: Execute test-evaluate-config in CoreCluster1
       run: |
-        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-evaluate-config'
+        ssh koshee-ci-server 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-evaluate-config'
 
     - name: Execute test-detect-build in CoreCluster1
       run: |
-        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-detect-build'
+        ssh koshee-ci-server 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-detect-build'
     
     - name: Execute test-config-from-env in CoreCluster1
       run: |
-        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-config-from-env'
+        ssh koshee-ci-server 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-config-from-env'
 
     - name: Execute test-nvidia-smi in CoreCluster12
       run: |
-        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-nvidia-smi'
+        ssh koshee-ci-server 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-nvidia-smi'
 
     - name: Execute test-config-load in CoreCluster12
       run: |
-        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-config-load'
+        ssh koshee-ci-server 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-config-load'
         
     - name: Execute test-evaluate-config in CoreCluster12
       run: |
-        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-evaluate-config'
+        ssh koshee-ci-server 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-evaluate-config'
 
     - name: Execute test-detect-build in CoreCluster12
       run: |
-        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-detect-build'
+        ssh koshee-ci-server 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-detect-build'
     
     - name: Execute test-config-from-env in CoreCluster12
       run: |
-        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-config-from-env'
+        ssh koshee-ci-server 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-config-from-env'
