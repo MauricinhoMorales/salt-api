@@ -4,4 +4,4 @@ Host koshee-ci-server
     ServerAliveInterval 60
     Port 22
     User koshee
-    IdentityFile ~/.ssh/ci_key_koshee.pem
+    IdentityFile ~/.ssh/ci_key
