@@ -1,0 +1,92 @@
+name: Workflow PR Test
+
+env:
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+
+on:
+  push:
+    branches:
+      - feature/salt
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ci
+      cancel-in-progress: true
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        lfs: true
+
+    - name: Install sshpass
+      run: sudo apt-get install -y sshpass
+
+    - name: Set up SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/ci_key
+        chmod 600 ~/.ssh/ci_key
+        ssh-keyscan -H 3.130.220.130 >> ~/.ssh/known_hosts
+
+    - name: Add config file
+      run: |
+        cat salt/ssh_config > ~/.ssh/config
+        chmod 600 ~/.ssh/config
+        chmod 700 ~/.ssh
+  
+    - name: Transfer files to Salt Master
+      run: |
+        sshpass -p "$SSH_PASSWORD" rsync -avz --delete --exclude=.git --filter=':- .gitignore' . "koshee-ci-server:/home/koshee/koshee/protect/salt_test"
+
+  test-suite:
+    needs: build
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ci
+      cancel-in-progress: true
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        lfs: true
+
+    - name: Install sshpass
+      run: sudo apt-get install -y sshpass
+
+    - name: Set up SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/ci_key
+        chmod 600 ~/.ssh/ci_key
+        ssh-keyscan -H 3.130.220.130 >> ~/.ssh/known_hosts
+
+    - name: Add config file
+      run: |
+        cat salt/ssh_config > ~/.ssh/config
+        chmod 600 ~/.ssh/config
+        chmod 700 ~/.ssh
+  
+    - name: Execute test-nvidia-smi in CoreCluster12
+      run: |
+        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster12' state.apply states.tests.test-nvidia-smi"
+
+    - name: Execute test-config-load in CoreCluster12
+      run: |
+        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster12' state.apply states.tests.test-config-load"
+        
+    - name: Execute test-evaluate-config in CoreCluster12
+      run: |
+        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster12' state.apply states.tests.test-evaluate-config"
+
+    - name: Execute test-detect-build in CoreCluster12
+      run: |
+        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster12' state.apply states.tests.test-detect-build"
+    
+    - name: Execute test-config-from-env in CoreCluster12
+      run: |
+        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster12' state.apply states.tests.test-config-from-env"
