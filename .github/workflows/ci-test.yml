@@ -59,3 +59,23 @@ jobs:
     - name: Execute test-config-from-env in CoreCluster1
       run: |
         ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-config-from-env'
+
+    - name: Execute test-nvidia-smi in CoreCluster12
+      run: |
+        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-nvidia-smi'
+
+    - name: Execute test-config-load in CoreCluster12
+      run: |
+        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-config-load'
+        
+    - name: Execute test-evaluate-config in CoreCluster12
+      run: |
+        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-evaluate-config'
+
+    - name: Execute test-detect-build in CoreCluster12
+      run: |
+        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-detect-build'
+    
+    - name: Execute test-config-from-env in CoreCluster12
+      run: |
+        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster12' state.apply states.tests.test-config-from-env'
