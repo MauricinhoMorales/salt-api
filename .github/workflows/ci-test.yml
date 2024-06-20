@@ -40,15 +40,22 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y jq
 
-    - name: Execute Salt commands via script
-      env:
-        SALT_MASTER_HOST: ${{ secrets.SALT_MASTER_HOST }}
-        SALT_MASTER_USER: ${{ secrets.SALT_MASTER_USER }}
-        SALT_MASTER_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+    - name: Execute test-nvidia-smi in CoreCluster1
       run: |
-        ./salt/salt-api.sh
+        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-nvidia-smi'
 
-    - name: Execute Salt commands via ssh
+    - name: Execute test-config-load in CoreCluster1
       run: |
-        ssh -i ~/.ssh/ci_key koshee@3.130.220.130 'echo koshee | sudo -S salt-run state.orchestrate orchestrate.orchestrate_ci pillar={"targets":"CoreCluster1 or CoreCluster12"}'
+        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-config-load'
+        
+    - name: Execute test-evaluate-config in CoreCluster1
+      run: |
+        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-evaluate-config'
+
+    - name: Execute test-detect-build in CoreCluster1
+      run: |
+        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-detect-build'
     
+    - name: Execute test-config-from-env in CoreCluster1
+      run: |
+        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'sudo salt 'CoreCluster1' state.apply states.tests.test-config-from-env'
