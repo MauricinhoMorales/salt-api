@@ -58,4 +58,4 @@ jobs:
     
     - name: Execute test-config-from-env in CoreCluster1
       run: |
-        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'sudo salt 'CoreCluster1' state.apply states.tests.test-config-from-env'
+        ssh -i ~/.ssh/ci_key ${{ secrets.SALT_MASTER_USER }}@${{ secrets.SALT_MASTER_HOST }} 'echo ${{ secrets.SSH_PASSWORD }} | sudo -S salt 'CoreCluster1' state.apply states.tests.test-config-from-env'
