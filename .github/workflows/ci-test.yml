@@ -41,7 +41,7 @@ jobs:
 
     - name: Execute test-nvidia-smi in CoreCluster1
       run: |
-        ssh koshee-ci-server 'echo "$SSH_PASSWORD" | sudo -S salt 'CoreCluster1' state.apply states.tests.test-nvidia-smi'
+        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster1' state.apply states.tests.test-nvidia-smi"
 
     - name: Execute test-config-load in CoreCluster1
       run: |
