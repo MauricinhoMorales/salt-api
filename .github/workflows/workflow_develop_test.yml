@@ -42,7 +42,7 @@ jobs:
       run: |
         sshpass -p "$SSH_PASSWORD" rsync -avz --delete --exclude=.git --filter=':- .gitignore' . "koshee-ci-server:/home/koshee/koshee/protect_ci"
 
-    - name: Execute test-nvidia-smi in CoreCluster1
+    - name: Execute test-dev in CoreCluster1
       run: |
         ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster1' state.apply states.batch.test-dev test=True"
 
