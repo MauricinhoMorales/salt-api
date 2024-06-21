@@ -40,7 +40,11 @@ jobs:
   
     - name: Transfer files to Salt Master
       run: |
-        sshpass -p "$SSH_PASSWORD" rsync -avz --delete --exclude=.git --filter=':- .gitignore' . "koshee-ci-server:/home/koshee/koshee/protect/salt_test"
+        sshpass -p "$SSH_PASSWORD" rsync -avz --delete --exclude=.git --filter=':- .gitignore' . "koshee-ci-server:/home/koshee/koshee/protect_ci"
+
+    - name: Execute test-dev in CoreCluster6
+      run: |
+        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster6' state.apply states.batch.test-dev test=True"
 
   test-suite:
     needs: build
@@ -71,22 +75,22 @@ jobs:
         chmod 600 ~/.ssh/config
         chmod 700 ~/.ssh
   
-    - name: Execute test-nvidia-smi in CoreCluster12
+    - name: Execute test-nvidia-smi in CoreCluster6
       run: |
-        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster12' state.apply states.tests.test-nvidia-smi"
+        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster6' state.apply states.tests.test-nvidia-smi"
 
-    - name: Execute test-config-load in CoreCluster12
+    - name: Execute test-config-load in CoreCluster6
       run: |
-        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster12' state.apply states.tests.test-config-load"
+        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster6' state.apply states.tests.test-config-load"
         
-    - name: Execute test-evaluate-config in CoreCluster12
+    - name: Execute test-evaluate-config in CoreCluster6
       run: |
-        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster12' state.apply states.tests.test-evaluate-config"
+        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster6' state.apply states.tests.test-evaluate-config"
 
-    - name: Execute test-detect-build in CoreCluster12
+    - name: Execute test-detect-build in CoreCluster6
       run: |
-        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster12' state.apply states.tests.test-detect-build"
+        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster6' state.apply states.tests.test-detect-build"
     
-    - name: Execute test-config-from-env in CoreCluster12
+    - name: Execute test-config-from-env in CoreCluster6
       run: |
-        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster12' state.apply states.tests.test-config-from-env"
+        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt 'CoreCluster6' state.apply states.tests.test-config-from-env"
