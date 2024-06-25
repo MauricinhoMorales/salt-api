@@ -43,7 +43,7 @@ jobs:
       run: |
         sshpass -p "$SSH_PASSWORD" rsync -avz --delete --exclude=.git --filter=':- .gitignore' . "koshee-ci-server:/home/koshee/koshee/protect_ci"
 
-    - name: Execute test-dev in $TARGET
+    - name: Execute test-dev
       run: |
         ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt $TARGET state.apply states.batch.test-dev "
 
@@ -76,22 +76,22 @@ jobs:
         chmod 600 ~/.ssh/config
         chmod 700 ~/.ssh
   
-    - name: Execute test-nvidia-smi in $TARGET
+    - name: Execute test-nvidia-smi
       run: |
         ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt $TARGET state.apply states.tests.test-nvidia-smi"
 
-    - name: Execute test-config-load in $TARGET
+    - name: Execute test-config-load
       run: |
         ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt $TARGET state.apply states.tests.test-config-load"
         
-    - name: Execute test-evaluate-config in $TARGET
+    - name: Execute test-evaluate-config
       run: |
         ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt $TARGET state.apply states.tests.test-evaluate-config"
 
-    - name: Execute test-detect-build in $TARGET
+    - name: Execute test-detect-build
       run: |
         ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt $TARGET state.apply states.tests.test-detect-build"
     
-    - name: Execute test-config-from-env in $TARGET
+    - name: Execute test-config-from-env
       run: |
         ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt $TARGET state.apply states.tests.test-config-from-env"
