@@ -45,16 +45,23 @@ jobs:
 
     - name: Execute test-config-load
       run: |
+        eval $(ssh-agent -s)
+        ssh-add ~/.ssh/ci_key
         ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-config-load"
         
     - name: Execute test-evaluate-config
       run: |
+        eval $(ssh-agent -s)
+        ssh-add ~/.ssh/ci_key
         ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-evaluate-config"
 
     - name: Execute test-detect-build
       run: |
+        eval $(ssh-agent -s)
+        ssh-add ~/.ssh/ci_key
         ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-detect-build"
     
     - name: Execute test-config-from-env
       run: |
+        ssh-add ~/.ssh/ci_key
         ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-config-from-env"
