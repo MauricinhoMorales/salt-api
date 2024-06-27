@@ -2,7 +2,6 @@ name: Workflow PR Test
 
 env:
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
   TARGET: 'CoreCluster6'
 
 on:
@@ -11,48 +10,7 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    concurrency:
-      group: ci
-      cancel-in-progress: true
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        lfs: true
-
-    - name: Install sshpass
-      run: sudo apt-get install -y sshpass
-
-    - name: Set up SSH key
-      run: |
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/ci_key
-        chmod 600 ~/.ssh/ci_key
-        ssh-keyscan -H 3.130.220.130 >> ~/.ssh/known_hosts
-
-    - name: Add config file
-      run: |
-        cat salt/ssh_config > ~/.ssh/config
-        chmod 600 ~/.ssh/config
-        chmod 700 ~/.ssh
-  
-    - name: Transfer files to Salt Master
-      run: |
-        sshpass -p "$SSH_PASSWORD" rsync -avz --delete --exclude=.git --filter=':- .gitignore' . "koshee-ci-server:/home/koshee/koshee/protect_ci"
-
-    - name: Execute sync-repo-ci
-      run: |
-        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt $TARGET state.apply states.syncs.sync-repo-ci"
-
-    - name: Execute test-dev
-      run: |
-        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt $TARGET state.apply states.batch.test-dev"
-
   test-suite:
-    needs: build
     runs-on: ubuntu-latest
     concurrency:
       group: ci
@@ -64,15 +22,13 @@ jobs:
       with:
         lfs: true
 
-    - name: Install sshpass
-      run: sudo apt-get install -y sshpass
-
     - name: Set up SSH key
       run: |
         mkdir -p ~/.ssh
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/ci_key
         chmod 600 ~/.ssh/ci_key
         ssh-keyscan -H 3.130.220.130 >> ~/.ssh/known_hosts
+        ssh-add ~/.ssh/ci_key
 
     - name: Add config file
       run: |
@@ -82,20 +38,20 @@ jobs:
   
     - name: Execute test-nvidia-smi
       run: |
-        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt $TARGET state.apply states.tests.test-nvidia-smi"
+        ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-nvidia-smi"
 
     - name: Execute test-config-load
       run: |
-        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt $TARGET state.apply states.tests.test-config-load"
+        ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-config-load"
         
     - name: Execute test-evaluate-config
       run: |
-        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt $TARGET state.apply states.tests.test-evaluate-config"
+        ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-evaluate-config"
 
     - name: Execute test-detect-build
       run: |
-        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt $TARGET state.apply states.tests.test-detect-build"
+        ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-detect-build"
     
     - name: Execute test-config-from-env
       run: |
-        ssh koshee-ci-server "echo $SSH_PASSWORD | sudo -S salt $TARGET state.apply states.tests.test-config-from-env"
+        ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-config-from-env"
