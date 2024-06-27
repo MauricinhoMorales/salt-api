@@ -39,6 +39,8 @@ jobs:
   
     - name: Execute test-nvidia-smi
       run: |
+        eval $(ssh-agent -s)
+        ssh-add ~/.ssh/ci_key
         ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-nvidia-smi"
 
     - name: Execute test-config-load
