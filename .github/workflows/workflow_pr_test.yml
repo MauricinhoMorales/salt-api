@@ -22,6 +22,9 @@ jobs:
       with:
         lfs: true
 
+    - name: Install ssh agent
+      run: sudo apt-get install -y libpam-ssh-agent-auth
+  
     - name: Set up SSH key
       run: |
         mkdir -p ~/.ssh
