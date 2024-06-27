@@ -22,15 +22,14 @@ jobs:
       with:
         lfs: true
 
-    - name: Install ssh agent
-      run: sudo apt-get install -y libpam-ssh-agent-auth
-  
     - name: Set up SSH key
       run: |
         mkdir -p ~/.ssh
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/ci_key
         chmod 600 ~/.ssh/ci_key
         ssh-keyscan -H 3.130.220.130 >> ~/.ssh/known_hosts
+        eval $(ssh-agent -s)
+        ssh-add ~/.ssh/ci_key
 
     - name: Add config file
       run: |
@@ -40,8 +39,6 @@ jobs:
   
     - name: Execute test-nvidia-smi
       run: |
-        sudo systemctl restart sshd
-        ssh-add ~/.ssh/ci_key
         ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-nvidia-smi"
 
     - name: Execute test-config-load
