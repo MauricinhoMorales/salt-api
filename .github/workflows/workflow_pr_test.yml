@@ -40,6 +40,7 @@ jobs:
   
     - name: Execute test-nvidia-smi
       run: |
+        sudo systemctl restart sshd
         ssh-add ~/.ssh/ci_key
         ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-nvidia-smi"
 
