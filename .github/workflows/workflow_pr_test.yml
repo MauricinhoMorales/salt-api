@@ -10,7 +10,46 @@ on:
       - main
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ci
+      cancel-in-progress: true
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        lfs: true
+        persist-credentials: false
+
+    - name: Set up SSH key
+      id: ssh-setup
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/ci_key
+        chmod 600 ~/.ssh/ci_key
+        ssh-keyscan -H 3.130.220.130 >> ~/.ssh/known_hosts
+        eval $(ssh-agent -s)
+        ssh-add ~/.ssh/ci_key
+        echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> $GITHUB_ENV
+
+    - name: Add config file
+      run: |
+        cat salt/ssh_config > ~/.ssh/config
+        chmod 600 ~/.ssh/config
+        chmod 700 ~/.ssh
+  
+    - name: Execute sync-repo-ci
+      run: |
+        ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.syncs.sync-repo-ci"
+
+    - name: Execute test-dev
+      run: |
+        ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.batch.test-dev"
+
   test-suite:
+    needs: build
     runs-on: ubuntu-latest
     concurrency:
       group: ci
