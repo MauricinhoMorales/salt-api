@@ -134,6 +134,6 @@ jobs:
         chmod 600 ~/.ssh/config
         chmod 700 ~/.ssh
   
-    - name: Execute test-nvidia-smi
+    - name: Execute test-detect-scalability
       run: |
         ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-detect-scalability"
