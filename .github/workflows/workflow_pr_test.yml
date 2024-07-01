@@ -2,7 +2,7 @@ name: Workflow PR Test
 
 env:
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  TARGET: 'CoreCluster6'
+  TARGET: 'ProtectModelsWest2'
 
 on:
   push:
@@ -102,3 +102,38 @@ jobs:
     - name: Execute test-config-from-env
       run: |
         ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-config-from-env"
+
+  test-scalability:
+    needs: test-suite
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ci
+      cancel-in-progress: true
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        lfs: true
+        persist-credentials: false
+
+    - name: Set up SSH key
+      id: ssh-setup
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/ci_key
+        chmod 600 ~/.ssh/ci_key
+        ssh-keyscan -H 3.130.220.130 >> ~/.ssh/known_hosts
+        eval $(ssh-agent -s)
+        ssh-add ~/.ssh/ci_key
+        echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> $GITHUB_ENV
+
+    - name: Add config file
+      run: |
+        cat salt/ssh_config > ~/.ssh/config
+        chmod 600 ~/.ssh/config
+        chmod 700 ~/.ssh
+  
+    - name: Execute test-nvidia-smi
+      run: |
+        ssh -A koshee-ci-server "sudo salt $TARGET state.apply states.tests.test-detect-scalability"
